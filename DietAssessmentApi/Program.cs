@@ -1,3 +1,6 @@
+using System;
+using System.IO;
+using System.Reflection;
 using System.Text.Json.Serialization;
 using DietAssessmentApi.Domain.Enums;
 using DietAssessmentApi.Infra;
@@ -25,13 +28,18 @@ public class Program
 
 		builder.Services.AddScoped<INutrientService, NutrientService>();
 
-		builder.Services.AddOpenApi();
+		builder.Services.AddSwaggerGen(options =>
+		{
+			var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+			options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+		});
 
 		var app = builder.Build();
 
 		if (app.Environment.IsDevelopment())
 		{
-			app.MapOpenApi();
+			app.UseSwagger();
+			app.UseSwaggerUI();
 		}
 
 		app.MapControllers();
