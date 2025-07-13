@@ -46,6 +46,8 @@ public class Program
 			using var scope = app.Services.CreateScope();
 			using var db = scope.ServiceProvider.GetRequiredService<NutrientContext>();
 			db.Database.Migrate();
+			
+			TestSeeder.Seed(db);
 		}
 
 		app.MapControllers();
