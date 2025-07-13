@@ -2,11 +2,13 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Text.Json.Serialization;
+using DietAssessmentApi.Data;
 using DietAssessmentApi.Domain.Enums;
 using DietAssessmentApi.Infra;
 using DietAssessmentApi.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 
 namespace DietAssessmentApi;
@@ -40,6 +42,10 @@ public class Program
 		{
 			app.UseSwagger();
 			app.UseSwaggerUI();
+
+			using var scope = app.Services.CreateScope();
+			using var db = scope.ServiceProvider.GetRequiredService<NutrientContext>();
+			db.Database.Migrate();
 		}
 
 		app.MapControllers();
