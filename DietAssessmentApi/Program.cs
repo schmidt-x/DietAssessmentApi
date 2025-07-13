@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+using DietAssessmentApi.Domain.Enums;
 using DietAssessmentApi.Infra;
 using DietAssessmentApi.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,6 +14,13 @@ public class Program
 	{
 		var builder = WebApplication.CreateBuilder(args);
 
+		builder.Services.AddControllers();
+		
+		builder.Services.Configure<Microsoft.AspNetCore.Mvc.JsonOptions>(opts =>
+		{
+			opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter<Unit>());
+		});
+
 		builder.Services.AddNutrientDbContext(builder.Configuration);
 
 		builder.Services.AddScoped<INutrientService, NutrientService>();
@@ -25,6 +34,8 @@ public class Program
 			app.MapOpenApi();
 		}
 
+		app.MapControllers();
+		
 		app.Run();
 	}
 }
